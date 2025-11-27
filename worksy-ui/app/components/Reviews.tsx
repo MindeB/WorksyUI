@@ -7,9 +7,23 @@ export default function Reviews() {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
   const reviews = t.reviews.items;
-  const itemsPerView = 3;
+
+  // Detect screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const itemsPerView = isMobile ? 1 : 3;
+  const maxIndex = Math.max(0, reviews.length - itemsPerView);
 
   // Auto-play functionality
   useEffect(() => {
@@ -17,28 +31,28 @@ export default function Reviews() {
 
     const interval = setInterval(() => {
       setCurrentIndex((prev) => {
-        const maxIndex = Math.max(0, reviews.length - itemsPerView);
         return prev >= maxIndex ? 0 : prev + 1;
       });
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isAutoPlaying, reviews.length]);
+  }, [isAutoPlaying, maxIndex]);
+
+  // Reset index if it's out of bounds after resize
+  useEffect(() => {
+    if (currentIndex > maxIndex) {
+      setCurrentIndex(maxIndex);
+    }
+  }, [currentIndex, maxIndex]);
 
   const goToNext = () => {
     setIsAutoPlaying(false);
-    setCurrentIndex((prev) => {
-      const maxIndex = Math.max(0, reviews.length - itemsPerView);
-      return prev >= maxIndex ? 0 : prev + 1;
-    });
+    setCurrentIndex((prev) => (prev >= maxIndex ? 0 : prev + 1));
   };
 
   const goToPrev = () => {
     setIsAutoPlaying(false);
-    setCurrentIndex((prev) => {
-      const maxIndex = Math.max(0, reviews.length - itemsPerView);
-      return prev <= 0 ? maxIndex : prev - 1;
-    });
+    setCurrentIndex((prev) => (prev <= 0 ? maxIndex : prev - 1));
   };
 
   const renderStars = (rating: number) => {
@@ -87,11 +101,11 @@ export default function Reviews() {
           {/* Navigation Buttons */}
           <button
             onClick={goToPrev}
-            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-white dark:bg-zinc-800 rounded-full p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors hidden md:block"
+            className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             aria-label="Previous reviews"
           >
             <svg
-              className="w-6 h-6 text-zinc-900 dark:text-zinc-50"
+              className="w-5 h-5 md:w-6 md:h-6 text-zinc-900 dark:text-zinc-50"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -102,11 +116,11 @@ export default function Reviews() {
 
           <button
             onClick={goToNext}
-            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-white dark:bg-zinc-800 rounded-full p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors hidden md:block"
+            className="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             aria-label="Next reviews"
           >
             <svg
-              className="w-6 h-6 text-zinc-900 dark:text-zinc-50"
+              className="w-5 h-5 md:w-6 md:h-6 text-zinc-900 dark:text-zinc-50"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -116,7 +130,7 @@ export default function Reviews() {
           </button>
 
           {/* Reviews Container */}
-          <div className="overflow-hidden">
+          <div className="overflow-hidden px-12 md:px-0">
             <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{
@@ -126,7 +140,7 @@ export default function Reviews() {
               {reviews.map((review, index) => (
                 <div
                   key={index}
-                  className="w-full md:w-1/3 flex-shrink-0 px-3"
+                  className="w-full md:w-1/3 flex-shrink-0 px-2 md:px-3"
                 >
                   <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 h-full border border-zinc-200 dark:border-zinc-800 hover:shadow-lg transition-shadow">
                     {/* User Info */}
@@ -159,7 +173,7 @@ export default function Reviews() {
 
           {/* Dots Indicator */}
           <div className="flex justify-center gap-2 mt-8">
-            {[...Array(Math.max(1, reviews.length - itemsPerView + 1))].map((_, index) => (
+            {[...Array(maxIndex + 1)].map((_, index) => (
               <button
                 key={index}
                 onClick={() => {
