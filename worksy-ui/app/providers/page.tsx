@@ -2,8 +2,6 @@
 
 import { useState, useMemo } from "react";
 import { useTranslation } from "../lib/i18n/LanguageContext";
-import Navigation from "../components/Navigation";
-import Footer from "../components/Footer";
 import ProviderCard from "../components/ProviderCard";
 
 const classes = {
@@ -49,75 +47,71 @@ export default function ProvidersPage() {
   }, [providers, selectedFilter]);
 
   return (
-    <>
-      <Navigation />
-      <main className={classes.page}>
-        <div className={classes.container}>
-          {/* Header */}
-          <div className={classes.header}>
-            <h1 className={classes.title}>{t.providers.title}</h1>
-          </div>
+    <main className={classes.page}>
+      <div className={classes.container}>
+        {/* Header */}
+        <div className={classes.header}>
+          <h1 className={classes.title}>{t.providers.title}</h1>
+        </div>
 
-          {/* Filter Section */}
-          <div className={classes.filterSection}>
-            <label className={classes.filterLabel}>
-              {t.providers.filterLabel}
-            </label>
-            <div className={classes.filterContainer}>
-              {/* All Services Button */}
+        {/* Filter Section */}
+        <div className={classes.filterSection}>
+          <label className={classes.filterLabel}>
+            {t.providers.filterLabel}
+          </label>
+          <div className={classes.filterContainer}>
+            {/* All Services Button */}
+            <button
+              onClick={() => setSelectedFilter("all")}
+              className={`${classes.filterButton} ${
+                selectedFilter === "all"
+                  ? classes.filterButtonActive
+                  : classes.filterButtonInactive
+              }`}
+            >
+              {t.providers.allServices}
+            </button>
+
+            {/* Individual Service Filters */}
+            {allServices.map((service) => (
               <button
-                onClick={() => setSelectedFilter("all")}
+                key={service}
+                onClick={() => setSelectedFilter(service)}
                 className={`${classes.filterButton} ${
-                  selectedFilter === "all"
+                  selectedFilter === service
                     ? classes.filterButtonActive
                     : classes.filterButtonInactive
                 }`}
               >
-                {t.providers.allServices}
+                {service}
               </button>
-
-              {/* Individual Service Filters */}
-              {allServices.map((service) => (
-                <button
-                  key={service}
-                  onClick={() => setSelectedFilter(service)}
-                  className={`${classes.filterButton} ${
-                    selectedFilter === service
-                      ? classes.filterButtonActive
-                      : classes.filterButtonInactive
-                  }`}
-                >
-                  {service}
-                </button>
-              ))}
-            </div>
+            ))}
           </div>
-
-          {/* Providers Grid */}
-          {filteredProviders.length > 0 ? (
-            <div className={classes.grid}>
-              {filteredProviders.map((provider) => (
-                <ProviderCard
-                  key={provider.id}
-                  companyName={provider.companyName}
-                  services={provider.services}
-                  rating={provider.rating}
-                  reviewCount={provider.reviewCount}
-                  location={provider.location}
-                  logo={provider.logo}
-                  photos={provider.photos}
-                />
-              ))}
-            </div>
-          ) : (
-            <div className={classes.noResults}>
-              <div className={classes.noResultsIcon}>🔍</div>
-              <p className={classes.noResultsText}>{t.providers.noResults}</p>
-            </div>
-          )}
         </div>
-      </main>
-      <Footer />
-    </>
+
+        {/* Providers Grid */}
+        {filteredProviders.length > 0 ? (
+          <div className={classes.grid}>
+            {filteredProviders.map((provider) => (
+              <ProviderCard
+                key={provider.id}
+                companyName={provider.companyName}
+                services={provider.services}
+                rating={provider.rating}
+                reviewCount={provider.reviewCount}
+                location={provider.location}
+                logo={provider.logo}
+                photos={provider.photos}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className={classes.noResults}>
+            <div className={classes.noResultsIcon}>🔍</div>
+            <p className={classes.noResultsText}>{t.providers.noResults}</p>
+          </div>
+        )}
+      </div>
+    </main>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslation } from "../lib/i18n/LanguageContext";
 
 const classes = {
@@ -26,12 +27,12 @@ const classes = {
 
 export default function Hero() {
   const [searchQuery, setSearchQuery] = useState("");
+  const router = useRouter();
   const { t } = useTranslation();
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    // TODO: Implement search functionality with API
-    console.log("Searching for:", searchQuery);
+    router.push("/providers");
   };
 
   // Service icons for animated background
