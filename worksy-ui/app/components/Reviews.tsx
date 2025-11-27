@@ -101,7 +101,7 @@ export default function Reviews() {
           {/* Navigation Buttons */}
           <button
             onClick={goToPrev}
-            className="absolute left-0 md:-left-4 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+            className="absolute left-2 md:-left-4 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             aria-label="Previous reviews"
           >
             <svg
@@ -116,7 +116,7 @@ export default function Reviews() {
 
           <button
             onClick={goToNext}
-            className="absolute right-0 md:-right-4 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+            className="absolute right-2 md:-right-4 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
             aria-label="Next reviews"
           >
             <svg
@@ -130,7 +130,7 @@ export default function Reviews() {
           </button>
 
           {/* Reviews Container */}
-          <div className="overflow-hidden px-12 md:px-0">
+          <div className="overflow-hidden">
             <div
               className="flex transition-transform duration-500 ease-in-out"
               style={{
@@ -140,7 +140,7 @@ export default function Reviews() {
               {reviews.map((review, index) => (
                 <div
                   key={index}
-                  className="w-full md:w-1/3 flex-shrink-0 px-2 md:px-3"
+                  className="w-full md:w-1/3 flex-shrink-0 px-4 md:px-3"
                 >
                   <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 h-full border border-zinc-200 dark:border-zinc-800 hover:shadow-lg transition-shadow">
                     {/* User Info */}
