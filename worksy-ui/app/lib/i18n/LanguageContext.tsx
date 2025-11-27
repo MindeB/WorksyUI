@@ -6,7 +6,7 @@ import { Locale, translations } from './translations';
 interface LanguageContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: typeof translations.en;
+  t: typeof translations[Locale];
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -37,11 +37,12 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
   // Save language preference when it changes
   const setLocale = (newLocale: Locale) => {
-    setLocaleState(newLocale);
+    // Save to storage first
     localStorage.setItem('locale', newLocale);
     // Also save to cookie for server-side access
     document.cookie = `locale=${newLocale}; path=/; max-age=31536000`; // 1 year
     // Refresh the page to re-render server components with new language
+    // Don't update state before reload to avoid flash of content
     window.location.reload();
   };
 
