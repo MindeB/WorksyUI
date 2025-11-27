@@ -3,6 +3,37 @@
 import { useState, useEffect } from "react";
 import { useTranslation } from "../lib/i18n/LanguageContext";
 
+const classes = {
+  section: "py-16 bg-white dark:bg-black",
+  container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+  header: "text-center mb-12",
+  title: "text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-4",
+  subtitle: "text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto",
+  carouselWrapper: "relative",
+  navButton: "absolute top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors",
+  prevButton: "left-2 md:-left-4",
+  nextButton: "right-2 md:-right-4",
+  navIcon: "w-5 h-5 md:w-6 md:h-6 text-zinc-900 dark:text-zinc-50",
+  reviewsContainer: "overflow-hidden",
+  reviewsTrack: "flex transition-transform duration-500 ease-in-out",
+  reviewSlide: "w-full md:w-1/3 flex-shrink-0 px-4 md:px-3",
+  reviewCard: "bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 h-full border border-zinc-200 dark:border-zinc-800 hover:shadow-lg transition-shadow",
+  userInfo: "flex items-center gap-4 mb-4",
+  avatar: "w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-lg",
+  userName: "font-semibold text-zinc-900 dark:text-zinc-50",
+  service: "text-sm text-zinc-500 dark:text-zinc-400",
+  ratingWrapper: "mb-4",
+  starsContainer: "flex gap-1",
+  star: "w-5 h-5",
+  starFilled: "text-yellow-400 fill-current",
+  starEmpty: "text-zinc-300 dark:text-zinc-600",
+  comment: "text-zinc-700 dark:text-zinc-300 leading-relaxed",
+  dotsContainer: "flex justify-center gap-2 mt-8",
+  dot: "h-2 rounded-full transition-all",
+  dotActive: "w-8 bg-blue-600",
+  dotInactive: "w-2 bg-zinc-300 dark:bg-zinc-600 hover:bg-zinc-400 dark:hover:bg-zinc-500",
+};
+
 export default function Reviews() {
   const { t } = useTranslation();
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -57,13 +88,11 @@ export default function Reviews() {
 
   const renderStars = (rating: number) => {
     return (
-      <div className="flex gap-1">
+      <div className={classes.starsContainer}>
         {[...Array(5)].map((_, i) => (
           <svg
             key={i}
-            className={`w-5 h-5 ${
-              i < rating ? "text-yellow-400 fill-current" : "text-zinc-300 dark:text-zinc-600"
-            }`}
+            className={`${classes.star} ${i < rating ? classes.starFilled : classes.starEmpty}`}
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -84,28 +113,28 @@ export default function Reviews() {
   };
 
   return (
-    <section className="py-16 bg-white dark:bg-black">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className={classes.section}>
+      <div className={classes.container}>
         {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">
+        <div className={classes.header}>
+          <h2 className={classes.title}>
             {t.reviews.title}
           </h2>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
+          <p className={classes.subtitle}>
             {t.reviews.subtitle}
           </p>
         </div>
 
         {/* Carousel */}
-        <div className="relative">
+        <div className={classes.carouselWrapper}>
           {/* Navigation Buttons */}
           <button
             onClick={goToPrev}
-            className="absolute left-2 md:-left-4 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+            className={`${classes.navButton} ${classes.prevButton}`}
             aria-label="Previous reviews"
           >
             <svg
-              className="w-5 h-5 md:w-6 md:h-6 text-zinc-900 dark:text-zinc-50"
+              className={classes.navIcon}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -116,11 +145,11 @@ export default function Reviews() {
 
           <button
             onClick={goToNext}
-            className="absolute right-2 md:-right-4 top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors"
+            className={`${classes.navButton} ${classes.nextButton}`}
             aria-label="Next reviews"
           >
             <svg
-              className="w-5 h-5 md:w-6 md:h-6 text-zinc-900 dark:text-zinc-50"
+              className={classes.navIcon}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -130,9 +159,9 @@ export default function Reviews() {
           </button>
 
           {/* Reviews Container */}
-          <div className="overflow-hidden">
+          <div className={classes.reviewsContainer}>
             <div
-              className="flex transition-transform duration-500 ease-in-out"
+              className={classes.reviewsTrack}
               style={{
                 transform: `translateX(-${currentIndex * (100 / itemsPerView)}%)`,
               }}
@@ -140,29 +169,29 @@ export default function Reviews() {
               {reviews.map((review, index) => (
                 <div
                   key={index}
-                  className="w-full md:w-1/3 flex-shrink-0 px-4 md:px-3"
+                  className={classes.reviewSlide}
                 >
-                  <div className="bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 h-full border border-zinc-200 dark:border-zinc-800 hover:shadow-lg transition-shadow">
+                  <div className={classes.reviewCard}>
                     {/* User Info */}
-                    <div className="flex items-center gap-4 mb-4">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-lg">
+                    <div className={classes.userInfo}>
+                      <div className={classes.avatar}>
                         {getInitials(review.name)}
                       </div>
                       <div>
-                        <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">
+                        <h3 className={classes.userName}>
                           {review.name}
                         </h3>
-                        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                        <p className={classes.service}>
                           {review.service}
                         </p>
                       </div>
                     </div>
 
                     {/* Rating */}
-                    <div className="mb-4">{renderStars(review.rating)}</div>
+                    <div className={classes.ratingWrapper}>{renderStars(review.rating)}</div>
 
                     {/* Comment */}
-                    <p className="text-zinc-700 dark:text-zinc-300 leading-relaxed">
+                    <p className={classes.comment}>
                       "{review.comment}"
                     </p>
                   </div>
@@ -172,7 +201,7 @@ export default function Reviews() {
           </div>
 
           {/* Dots Indicator */}
-          <div className="flex justify-center gap-2 mt-8">
+          <div className={classes.dotsContainer}>
             {[...Array(maxIndex + 1)].map((_, index) => (
               <button
                 key={index}
@@ -180,10 +209,10 @@ export default function Reviews() {
                   setIsAutoPlaying(false);
                   setCurrentIndex(index);
                 }}
-                className={`h-2 rounded-full transition-all ${
+                className={`${classes.dot} ${
                   index === currentIndex
-                    ? "w-8 bg-blue-600"
-                    : "w-2 bg-zinc-300 dark:bg-zinc-600 hover:bg-zinc-400 dark:hover:bg-zinc-500"
+                    ? classes.dotActive
+                    : classes.dotInactive
                 }`}
                 aria-label={`Go to review set ${index + 1}`}
               />
