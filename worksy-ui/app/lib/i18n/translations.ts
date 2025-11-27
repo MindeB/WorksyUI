@@ -62,6 +62,50 @@ export const translations = {
       },
     },
 
+    // Reviews Section
+    reviews: {
+      title: 'What Our Customers Say',
+      subtitle: 'Real experiences from people who found their perfect professional',
+      items: [
+        {
+          name: 'Sarah Johnson',
+          rating: 5,
+          comment: 'Found an amazing electrician through Worksy! He was professional, on time, and the pricing was transparent. Highly recommend this platform!',
+          service: 'Electrical Work',
+        },
+        {
+          name: 'Michael Chen',
+          rating: 5,
+          comment: 'The plumber I hired fixed my leaking pipes in no time. The whole process was seamless from booking to payment. Will definitely use again!',
+          service: 'Plumbing',
+        },
+        {
+          name: 'Emma Williams',
+          rating: 4,
+          comment: 'Great experience! The house cleaning service was thorough and professional. Easy to schedule and communicate with the specialist.',
+          service: 'House Cleaning',
+        },
+        {
+          name: 'David Martinez',
+          rating: 5,
+          comment: 'I needed my roof repaired urgently. Found a reliable specialist within hours. Quality work at a fair price. Very satisfied!',
+          service: 'Roofing',
+        },
+        {
+          name: 'Lisa Anderson',
+          rating: 5,
+          comment: 'The painter did an excellent job on my living room. Attention to detail was impressive. Love how easy it was to find verified professionals!',
+          service: 'Painting',
+        },
+        {
+          name: 'James Wilson',
+          rating: 4,
+          comment: 'Hired a landscaper for my backyard. Professional service and great results. The review system really helped me choose the right person.',
+          service: 'Landscaping',
+        },
+      ],
+    },
+
     // CTA Sections
     cta: {
       user: {
@@ -207,6 +251,50 @@ export const translations = {
           description: 'Darbas atliekamas, mokate saugiai ir palikite atsiliepimą',
         },
       },
+    },
+
+    // Reviews Section
+    reviews: {
+      title: 'Ką sako mūsų klientai',
+      subtitle: 'Tikri atsiliepimai žmonių, kurie rado savo tobulą specialistą',
+      items: [
+        {
+          name: 'Sarah Johnson',
+          rating: 5,
+          comment: 'Radau nuostabų elektriką per Worksy! Jis buvo profesionalus, punktualus, o kainos buvo skaidrios. Labai rekomenduoju šią platformą!',
+          service: 'Elektros darbai',
+        },
+        {
+          name: 'Michael Chen',
+          rating: 5,
+          comment: 'Santechnikas, kurį pasamdžiau, per trumpą laiką sutvarkė mano tekančias vamzdžius. Visas procesas nuo užsakymo iki mokėjimo buvo sklandus. Tikrai naudosiu vėl!',
+          service: 'Santechnika',
+        },
+        {
+          name: 'Emma Williams',
+          rating: 4,
+          comment: 'Puiki patirtis! Namų valymo paslauga buvo kruopšti ir profesionali. Lengva planuoti ir bendrauti su specialistu.',
+          service: 'Namų valymas',
+        },
+        {
+          name: 'David Martinez',
+          rating: 5,
+          comment: 'Man skubiai reikėjo suremontuoti stogą. Radau patikimą specialistą per kelias valandas. Kokybiškas darbas už teisingą kainą. Labai patenkintas!',
+          service: 'Stogų darbai',
+        },
+        {
+          name: 'Lisa Anderson',
+          rating: 5,
+          comment: 'Dažytojas puikiai atliko darbą mano svetainėje. Įspūdingas dėmesys detalėms. Patinka, kaip lengva buvo rasti patikrintus specialistus!',
+          service: 'Dažymas',
+        },
+        {
+          name: 'James Wilson',
+          rating: 4,
+          comment: 'Pasamdžiau apželdintoją savo kiemui. Profesionali paslauga ir puikūs rezultatai. Atsiliepimų sistema tikrai padėjo pasirinkti tinkamą asmenį.',
+          service: 'Apželdinimas',
+        },
+      ],
     },
 
     // CTA Sections
