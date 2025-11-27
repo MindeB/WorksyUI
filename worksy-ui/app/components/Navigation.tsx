@@ -89,6 +89,10 @@ export default function Navigation() {
               </div>
             </div>
 
+            <Link href="/providers" className={classes.navLink}>
+              {t.nav.providers}
+            </Link>
+
             <Link href="/about" className={classes.navLink}>
               {t.nav.about}
             </Link>
@@ -150,6 +154,10 @@ export default function Navigation() {
                 </div>
               )}
             </div>
+
+            <Link href="/providers" onClick={() => setIsMenuOpen(false)} className={`${classes.navLink} block`}>
+              {t.nav.providers}
+            </Link>
 
             <Link href="/about" onClick={() => setIsMenuOpen(false)} className={`${classes.navLink} block`}>
               {t.nav.about}
