@@ -6,7 +6,7 @@ import { useTranslation } from "../lib/i18n/LanguageContext";
 import LanguageSwitcher from "./LanguageSwitcher";
 
 const classes = {
-  nav: "w-full bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800 relative z-50",
+  nav: "w-full bg-white dark:bg-black border-b border-zinc-200 dark:border-zinc-800 sticky top-0 z-50 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95",
   container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
   navInner: "flex justify-between items-center h-16",
   logo: "text-xl font-bold text-zinc-900 dark:text-zinc-50",
@@ -32,10 +32,12 @@ export default function Navigation() {
   const { t } = useTranslation();
 
   const serviceGroups = [
-    { name: t.serviceGroups.interior, href: "/services/group/interior" },
-    { name: t.serviceGroups.exterior, href: "/services/group/exterior" },
-    { name: t.serviceGroups.lawnGarden, href: "/services/group/lawn-garden" },
-    { name: t.serviceGroups.additional, href: "/services/group/additional" },
+    { name: t.serviceGroups.home, href: "/services/category/home" },
+    { name: t.serviceGroups.exterior, href: "/services/category/exterior" },
+    { name: t.serviceGroups.garden, href: "/services/category/garden" },
+    { name: t.serviceGroups.design, href: "/services/category/design" },
+    { name: t.serviceGroups.events, href: "/services/category/events" },
+    { name: t.serviceGroups.other, href: "/services/category/other" },
   ];
 
   return (
