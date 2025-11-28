@@ -33,11 +33,16 @@ export default function CategoriesSection() {
         <div className={classes.grid}>
           {featuredCategories.map((category) => {
             const translatedCategory = t.serviceCategories[category.id as keyof typeof t.serviceCategories];
+            const serviceName = translatedCategory?.name || category.name;
             return (
-              <Link key={category.id} href={`/services/${category.id}`} className={classes.categoryCard}>
+              <Link
+                key={category.id}
+                href={`/providers?service=${category.id}`}
+                className={classes.categoryCard}
+              >
                 <div className={classes.icon}>{category.icon}</div>
                 <h3 className={classes.categoryName}>
-                  {translatedCategory?.name || category.name}
+                  {serviceName}
                 </h3>
                 <p className={classes.categoryDescription}>
                   {translatedCategory?.description || category.description}
