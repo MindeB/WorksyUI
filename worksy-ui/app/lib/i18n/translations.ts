@@ -13,10 +13,12 @@ export const translations = {
 
     // Service Groups
     serviceGroups: {
-      interior: 'Interior Services',
-      exterior: 'Exterior Services',
-      lawnGarden: 'Lawn & Garden',
-      additional: 'Additional Services',
+      home: 'Home Services',
+      exterior: 'Exterior & Construction',
+      garden: 'Garden & Outdoor',
+      design: 'Design & Furniture',
+      events: 'Events & Media',
+      other: 'Other Services',
     },
 
     // Hero Section
@@ -236,6 +238,16 @@ export const translations = {
       'pest-control': { name: 'Pest Control', description: 'Pest control services' },
       'pressure-washing': { name: 'Pressure Washing', description: 'Pressure washing services' },
       'septic-tanks': { name: 'Septic Tanks', description: 'Septic tank services' },
+      'interior-design': { name: 'Interior Design', description: 'Professional interior design services' },
+      'furniture-makers': { name: 'Furniture Makers', description: 'Custom furniture manufacturing' },
+      'custom-cabinetry': { name: 'Custom Cabinetry', description: 'Bespoke cabinet design and installation' },
+      'upholstery': { name: 'Upholstery', description: 'Furniture upholstery services' },
+      'window-treatments': { name: 'Window Treatments', description: 'Curtains, blinds, and window design' },
+      'event-planning': { name: 'Event Planning', description: 'Professional event planning' },
+      'photography': { name: 'Photography', description: 'Event and portrait photography' },
+      'videography': { name: 'Videography', description: 'Professional video services' },
+      'catering': { name: 'Catering', description: 'Event catering services' },
+      'musicians': { name: 'Musicians', description: 'Live music for events' },
     },
 
     // Providers Page
@@ -373,10 +385,12 @@ export const translations = {
 
     // Service Groups
     serviceGroups: {
-      interior: 'Vidaus paslaugos',
-      exterior: 'Išorės paslaugos',
-      lawnGarden: 'Sodo paslaugos',
-      additional: 'Papildomos paslaugos',
+      home: 'Namų paslaugos',
+      exterior: 'Išorės ir statyba',
+      garden: 'Sodas ir lauko erdvės',
+      design: 'Dizainas ir baldai',
+      events: 'Renginiai ir media',
+      other: 'Kitos paslaugos',
     },
 
     // Hero Section
@@ -596,6 +610,16 @@ export const translations = {
       'pest-control': { name: 'Kenkėjų kontrolė', description: 'Kenkėjų kontrolės paslaugos' },
       'pressure-washing': { name: 'Slėginis plovimas', description: 'Slėginio plovimo paslaugos' },
       'septic-tanks': { name: 'Septiniai', description: 'Septikų paslaugos' },
+      'interior-design': { name: 'Interjero dizainas', description: 'Profesionalios interjero dizaino paslaugos' },
+      'furniture-makers': { name: 'Baldų gamintojai', description: 'Baldų gamyba pagal užsakymą' },
+      'custom-cabinetry': { name: 'Baldų gamyba', description: 'Individualių baldų projektavimas ir montavimas' },
+      'upholstery': { name: 'Apmušalai', description: 'Baldų apmušimo paslaugos' },
+      'window-treatments': { name: 'Langų dekoravimas', description: 'Užuolaidos, žaliuzės ir langų dizainas' },
+      'event-planning': { name: 'Renginių planavimas', description: 'Profesionalus renginių planavimas' },
+      'photography': { name: 'Fotografija', description: 'Renginių ir portretų fotografija' },
+      'videography': { name: 'Videofilmavimas', description: 'Profesionalios video paslaugos' },
+      'catering': { name: 'Maitinimas', description: 'Renginių maitinimo paslaugos' },
+      'musicians': { name: 'Muzikantai', description: 'Gyva muzika renginiams' },
     },
 
     // Providers Page
