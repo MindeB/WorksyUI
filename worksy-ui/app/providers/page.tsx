@@ -1,74 +1,155 @@
 "use client";
 
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useState, useMemo, useRef, useEffect, Suspense } from "react";
 import { useTranslation } from "../lib/i18n/LanguageContext";
+import { useSearchParams } from "next/navigation";
 import ProviderCard from "../components/ProviderCard";
+import ChipDropdownFilters from "../components/ChipDropdownFilters";
+import { categories } from "../data/categories";
 
 const classes = {
   page: "min-h-screen bg-zinc-50 dark:bg-black",
+  content: "pt-8",
   container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12",
   header: "mb-8",
   title: "text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-6",
-  filterSection: "mb-8",
-  filterLabel: "text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-3 block",
-  chipsContainer: "flex flex-wrap gap-3",
-  chip: "relative inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium cursor-pointer transition-all border",
-  chipInactive: "bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border-zinc-200 dark:border-zinc-800 hover:bg-zinc-50 dark:hover:bg-zinc-800",
-  chipActive: "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-300 dark:border-blue-700",
-  chipLabel: "flex items-center gap-1.5",
-  chipClearButton: "ml-1 p-0.5 rounded-full hover:bg-blue-200 dark:hover:bg-blue-800 transition-colors",
-  chevron: "text-zinc-500 dark:text-zinc-400 transition-transform text-xs",
-  chevronOpen: "transform rotate-180",
-  dropdownMenu: "absolute z-20 mt-2 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-lg shadow-xl max-h-60 overflow-y-auto min-w-[200px]",
-  dropdownItem: "px-4 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800 cursor-pointer flex items-center gap-2 transition-colors",
-  checkbox: "w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 text-blue-600 focus:ring-blue-500",
-  dropdownItemText: "text-sm text-zinc-900 dark:text-zinc-50",
   grid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12",
   noResults: "text-center py-16",
   noResultsText: "text-xl text-zinc-600 dark:text-zinc-400 mb-4",
   noResultsIcon: "text-6xl mb-4",
 };
 
-export default function ProvidersPage() {
-  const { t } = useTranslation();
-  const [selectedServices, setSelectedServices] = useState<string[]>([]);
-  const [selectedLocations, setSelectedLocations] = useState<string[]>([]);
-  const [selectedRatings, setSelectedRatings] = useState<number[]>([]);
-  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+// Service ID to English name mapping
+const SERVICE_ID_TO_ENGLISH: Record<string, string> = {
+  'appliance-repair': 'Appliance Repair',
+  'carpet-cleaning': 'Carpet Cleaning',
+  'contractors': 'Contractors',
+  'drywall': 'Drywall',
+  'electrical': 'Electrical',
+  'flooring': 'Flooring',
+  'hvac': 'HVAC',
+  'house-cleaning': 'House Cleaning',
+  'interior-painting': 'Interior Painting',
+  'plumbing': 'Plumbing',
+  'remodeling': 'Remodeling',
+  'concrete-repair': 'Concrete Repair',
+  'doors': 'Doors',
+  'driveways': 'Driveways',
+  'exterior-painting': 'Exterior Painting',
+  'garage-doors': 'Garage Doors',
+  'gutter-cleaning': 'Gutter Cleaning',
+  'gutter-repair': 'Gutter Repair',
+  'home-builders': 'Home Builders',
+  'masonry': 'Masonry',
+  'roofing': 'Roofing',
+  'siding': 'Siding',
+  'windows': 'Windows',
+  'decks': 'Decks',
+  'fencing': 'Fencing',
+  'land-surveying': 'Land Surveying',
+  'landscaping': 'Landscaping',
+  'lawn-yard-work': 'Lawn & Yard Work',
+  'leaf-removal': 'Leaf Removal',
+  'patios': 'Patios',
+  'pool-installation': 'Pool Installation',
+  'sprinkler-systems': 'Sprinkler Systems',
+  'sunrooms': 'Sunrooms',
+  'tree-service': 'Tree Service',
+  'basement-waterproofing': 'Basement Waterproofing',
+  'handymen': 'Handymen',
+  'junk-hauling': 'Junk Hauling',
+  'locksmiths': 'Locksmiths',
+  'moving-companies': 'Moving Companies',
+  'pest-control': 'Pest Control',
+  'pressure-washing': 'Pressure Washing',
+  'septic-tanks': 'Septic Tanks',
+};
 
-  const servicesRef = useRef<HTMLDivElement>(null);
-  const locationsRef = useRef<HTMLDivElement>(null);
-  const ratingsRef = useRef<HTMLDivElement>(null);
+// Service ID to Lithuanian name mapping
+const SERVICE_ID_TO_LITHUANIAN: Record<string, string> = {
+  'appliance-repair': 'Buitinės technikos remontas',
+  'carpet-cleaning': 'Kilimų valymas',
+  'contractors': 'Rangovas',
+  'drywall': 'Gipso kartono darbai',
+  'electrical': 'Elektros darbai',
+  'flooring': 'Grindų klojimas',
+  'hvac': 'Vėdinimas',
+  'house-cleaning': 'Namų valymas',
+  'interior-painting': 'Vidaus dažymas',
+  'plumbing': 'Santechnika',
+  'remodeling': 'Pertvarkymas',
+  'concrete-repair': 'Betono remontas',
+  'doors': 'Durys',
+  'driveways': 'Privažiavimai',
+  'exterior-painting': 'Išorės dažymas',
+  'garage-doors': 'Garažo vartai',
+  'gutter-cleaning': 'Latakų valymas',
+  'gutter-repair': 'Latakų remontas',
+  'home-builders': 'Namų statytojai',
+  'masonry': 'Mūro darbai',
+  'roofing': 'Stogų darbai',
+  'siding': 'Fasado apdaila',
+  'windows': 'Langai',
+  'decks': 'Terasas',
+  'fencing': 'Tvoros',
+  'land-surveying': 'Žemės matavimas',
+  'landscaping': 'Apželdinimas',
+  'lawn-yard-work': 'Vejos ir kiemo darbai',
+  'leaf-removal': 'Lapų šalinimas',
+  'patios': 'Kiemų įrengimas',
+  'pool-installation': 'Baseinų montavimas',
+  'sprinkler-systems': 'Laistymo sistemos',
+  'sunrooms': 'Vasarinės veranda',
+  'tree-service': 'Medžių priežiūra',
+  'basement-waterproofing': 'Rūsio hidroizoliacija',
+  'handymen': 'Meistrai',
+  'junk-hauling': 'Šiukšlių išvežimas',
+  'locksmiths': 'Spynos meistrai',
+  'moving-companies': 'Kėlimosi paslaugos',
+  'pest-control': 'Kenkėjų kontrolė',
+  'pressure-washing': 'Slėginis plovimas',
+  'septic-tanks': 'Septiniai',
+};
+
+function ProvidersPageContent() {
+  const { t, locale } = useTranslation();
+  const searchParams = useSearchParams();
+  const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({});
 
   const providers = t.providers.items;
 
-  // Close dropdown when clicking outside
+  // Initialize filters from URL params
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        servicesRef.current &&
-        !servicesRef.current.contains(event.target as Node) &&
-        locationsRef.current &&
-        !locationsRef.current.contains(event.target as Node) &&
-        ratingsRef.current &&
-        !ratingsRef.current.contains(event.target as Node)
-      ) {
-        setOpenDropdown(null);
-      }
-    };
+    const serviceId = searchParams.get('service');
+    const location = searchParams.get('location');
+    const budget = searchParams.get('budget');
+    const rating = searchParams.get('rating');
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    const initialFilters: Record<string, string | string[]> = {};
+    // Service can be multi-select, so wrap in array
+    if (serviceId) {
+      initialFilters['service-type'] = [serviceId];
+    }
+    if (location) initialFilters['location'] = location;
+    if (budget) initialFilters['budget'] = budget;
+    if (rating) initialFilters['rating'] = rating;
 
-  // Extract all unique services
-  const allServices = useMemo(() => {
-    const servicesSet = new Set<string>();
-    providers.forEach((provider) => {
-      provider.services.forEach((service) => servicesSet.add(service));
+    setFilterValues(initialFilters);
+  }, [searchParams]);
+
+  // Show ALL services from categories with translated names
+  const availableServiceOptions = useMemo(() => {
+    // Map all categories to translated names for dropdown options
+    const options: { label: string; value: string }[] = categories.map((category) => {
+      const translatedCategory = t.serviceCategories[category.id as keyof typeof t.serviceCategories];
+      return {
+        label: translatedCategory?.name || category.name, // Display translated name
+        value: category.id, // Use service ID as value
+      };
     });
-    return Array.from(servicesSet).sort();
-  }, [providers]);
+
+    return options.sort((a, b) => a.label.localeCompare(b.label));
+  }, [t, locale]);
 
   // Extract all unique locations
   const allLocations = useMemo(() => {
@@ -79,370 +160,140 @@ export default function ProvidersPage() {
     return Array.from(locationsSet).sort();
   }, [providers]);
 
-  // Extract all unique rating ranges
-  const ratingRanges = [
-    { label: "5 stars", value: 5 },
-    { label: "4+ stars", value: 4 },
-    { label: "3+ stars", value: 3 },
-  ];
+  // Define filters for chip filter component with translated labels
+  const filters = useMemo(() => [
+    {
+      label: locale === 'lt' ? "Paslaugos tipas" : "Service Type",
+      value: "service-type",
+      options: availableServiceOptions,
+      multiSelect: true, // Allow multiple service selections
+    },
+    {
+      label: locale === 'lt' ? "Vieta" : "Location",
+      value: "location",
+      options: allLocations.map(location => ({
+        label: location,
+        value: location,
+      })),
+    },
+    {
+      label: locale === 'lt' ? "Biudžetas" : "Budget",
+      value: "budget",
+      options: locale === 'lt' ? [
+        { label: "€ - Ekonomiškas", value: "low" },
+        { label: "€€ - Vidutinis", value: "medium" },
+        { label: "€€€ - Aukštas", value: "high" },
+        { label: "€€€€ - Premium", value: "premium" },
+      ] : [
+        { label: "€ - Budget", value: "low" },
+        { label: "€€ - Medium", value: "medium" },
+        { label: "€€€ - High", value: "high" },
+        { label: "€€€€ - Premium", value: "premium" },
+      ],
+    },
+    {
+      label: locale === 'lt' ? "Įvertinimas" : "Rating",
+      value: "rating",
+      options: locale === 'lt' ? [
+        { label: "5 žvaigždutės", value: "5" },
+        { label: "4+ žvaigždutės", value: "4" },
+        { label: "3+ žvaigždutės", value: "3" },
+      ] : [
+        { label: "5 stars", value: "5" },
+        { label: "4+ stars", value: "4" },
+        { label: "3+ stars", value: "3" },
+      ],
+    },
+  ], [locale, availableServiceOptions, allLocations]);
 
   // Filter providers based on selected filters
   const filteredProviders = useMemo(() => {
+    // Use appropriate service mapping based on locale
+    const serviceMapping = locale === 'lt' ? SERVICE_ID_TO_LITHUANIAN : SERVICE_ID_TO_ENGLISH;
+
     return providers.filter((provider) => {
-      // Filter by services
-      if (selectedServices.length > 0) {
-        const hasService = provider.services.some((service) =>
-          selectedServices.includes(service)
-        );
-        if (!hasService) return false;
+      // Filter by service (can be array for multi-select)
+      const serviceFilter = filterValues['service-type'];
+      if (serviceFilter) {
+        const serviceIds = Array.isArray(serviceFilter) ? serviceFilter : [serviceFilter];
+        // Check if provider has ANY of the selected services
+        const hasMatchingService = serviceIds.some((serviceId) => {
+          const serviceName = serviceMapping[serviceId];
+          return serviceName && (provider.services as readonly string[]).includes(serviceName);
+        });
+        if (!hasMatchingService) {
+          return false;
+        }
       }
 
       // Filter by location
-      if (selectedLocations.length > 0) {
-        if (!selectedLocations.includes(provider.location)) return false;
+      const locationFilter = filterValues['location'] as string;
+      if (locationFilter && provider.location !== locationFilter) {
+        return false;
       }
 
       // Filter by rating
-      if (selectedRatings.length > 0) {
-        const meetsRating = selectedRatings.some((minRating) => {
-          if (minRating === 5) {
-            return provider.rating === 5;
-          }
-          return provider.rating >= minRating;
-        });
-        if (!meetsRating) return false;
+      const ratingFilter = filterValues['rating'] as string;
+      if (ratingFilter) {
+        const minRating = parseInt(ratingFilter);
+        if (minRating === 5 && provider.rating !== 5) {
+          return false;
+        } else if (provider.rating < minRating) {
+          return false;
+        }
       }
 
       return true;
     });
-  }, [providers, selectedServices, selectedLocations, selectedRatings]);
+  }, [providers, filterValues, locale]);
 
-  const toggleService = (service: string) => {
-    setSelectedServices((prev) =>
-      prev.includes(service)
-        ? prev.filter((s) => s !== service)
-        : [...prev, service]
-    );
-  };
-
-  const toggleLocation = (location: string) => {
-    setSelectedLocations((prev) =>
-      prev.includes(location)
-        ? prev.filter((l) => l !== location)
-        : [...prev, location]
-    );
-  };
-
-  const toggleRating = (rating: number) => {
-    setSelectedRatings((prev) =>
-      prev.includes(rating)
-        ? prev.filter((r) => r !== rating)
-        : [...prev, rating]
-    );
-  };
-
-  const clearServices = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedServices([]);
-    setOpenDropdown(null);
-  };
-
-  const clearLocations = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedLocations([]);
-    setOpenDropdown(null);
-  };
-
-  const clearRatings = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setSelectedRatings([]);
-    setOpenDropdown(null);
-  };
-
-  const getServicesLabel = () => {
-    if (selectedServices.length === 0) return "Services";
-    if (selectedServices.length === 1) return selectedServices[0];
-    return `${selectedServices[0]} +${selectedServices.length - 1}`;
-  };
-
-  const getLocationsLabel = () => {
-    if (selectedLocations.length === 0) return "Location";
-    if (selectedLocations.length === 1) return selectedLocations[0];
-    return `${selectedLocations[0]} +${selectedLocations.length - 1}`;
-  };
-
-  const getRatingsLabel = () => {
-    if (selectedRatings.length === 0) return "Rating";
-    const firstRating = ratingRanges.find((r) => r.value === selectedRatings[0]);
-    if (selectedRatings.length === 1) return firstRating?.label || "Rating";
-    return `${firstRating?.label} +${selectedRatings.length - 1}`;
+  const handleFilterChange = (newFilters: Record<string, string | string[]>) => {
+    setFilterValues(newFilters);
   };
 
   return (
     <main className={classes.page}>
-      <div className={classes.container}>
-        {/* Header */}
-        <div className={classes.header}>
-          <h1 className={classes.title}>{t.providers.title}</h1>
+      <ChipDropdownFilters filters={filters} onFilterChange={handleFilterChange} initialValues={filterValues} />
+
+      <div className={classes.content}>
+        <div className={classes.container}>
+          {/* Header */}
+          <div className={classes.header}>
+            <h1 className={classes.title}>{t.providers.title}</h1>
+          </div>
+
+          {/* Providers Grid */}
+          {filteredProviders.length > 0 ? (
+            <div className={classes.grid}>
+              {filteredProviders.map((provider) => (
+                <ProviderCard
+                  key={provider.id}
+                  companyName={provider.companyName}
+                  services={provider.services}
+                  rating={provider.rating}
+                  reviewCount={provider.reviewCount}
+                  location={provider.location}
+                  logo={provider.logo}
+                  photos={provider.photos}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className={classes.noResults}>
+              <div className={classes.noResultsIcon}>🔍</div>
+              <p className={classes.noResultsText}>{t.providers.noResults}</p>
+            </div>
+          )}
         </div>
-
-        {/* Filter Section */}
-        <div className={classes.filterSection}>
-          <label className={classes.filterLabel}>{t.providers.filterLabel}</label>
-
-          <div className={classes.chipsContainer}>
-            {/* Services Chip */}
-            <div className="relative" ref={servicesRef}>
-              <div
-                onClick={() =>
-                  setOpenDropdown(openDropdown === "services" ? null : "services")
-                }
-                className={`${classes.chip} ${
-                  selectedServices.length > 0
-                    ? classes.chipActive
-                    : classes.chipInactive
-                }`}
-              >
-                <span className={classes.chipLabel}>
-                  {getServicesLabel()}
-                  {selectedServices.length === 0 && (
-                    <svg
-                      className={`w-3 h-3 ${classes.chevron} ${
-                        openDropdown === "services" ? classes.chevronOpen : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  )}
-                </span>
-                {selectedServices.length > 0 && (
-                  <button
-                    onClick={clearServices}
-                    className={classes.chipClearButton}
-                    aria-label="Clear services filter"
-                  >
-                    <svg
-                      className="w-3.5 h-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              {openDropdown === "services" && (
-                <div className={classes.dropdownMenu}>
-                  {allServices.map((service) => (
-                    <div
-                      key={service}
-                      onClick={() => toggleService(service)}
-                      className={classes.dropdownItem}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedServices.includes(service)}
-                        onChange={() => {}}
-                        className={classes.checkbox}
-                      />
-                      <span className={classes.dropdownItemText}>{service}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Location Chip */}
-            <div className="relative" ref={locationsRef}>
-              <div
-                onClick={() =>
-                  setOpenDropdown(openDropdown === "location" ? null : "location")
-                }
-                className={`${classes.chip} ${
-                  selectedLocations.length > 0
-                    ? classes.chipActive
-                    : classes.chipInactive
-                }`}
-              >
-                <span className={classes.chipLabel}>
-                  {getLocationsLabel()}
-                  {selectedLocations.length === 0 && (
-                    <svg
-                      className={`w-3 h-3 ${classes.chevron} ${
-                        openDropdown === "location" ? classes.chevronOpen : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  )}
-                </span>
-                {selectedLocations.length > 0 && (
-                  <button
-                    onClick={clearLocations}
-                    className={classes.chipClearButton}
-                    aria-label="Clear location filter"
-                  >
-                    <svg
-                      className="w-3.5 h-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              {openDropdown === "location" && (
-                <div className={classes.dropdownMenu}>
-                  {allLocations.map((location) => (
-                    <div
-                      key={location}
-                      onClick={() => toggleLocation(location)}
-                      className={classes.dropdownItem}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedLocations.includes(location)}
-                        onChange={() => {}}
-                        className={classes.checkbox}
-                      />
-                      <span className={classes.dropdownItemText}>{location}</span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Rating Chip */}
-            <div className="relative" ref={ratingsRef}>
-              <div
-                onClick={() =>
-                  setOpenDropdown(openDropdown === "rating" ? null : "rating")
-                }
-                className={`${classes.chip} ${
-                  selectedRatings.length > 0
-                    ? classes.chipActive
-                    : classes.chipInactive
-                }`}
-              >
-                <span className={classes.chipLabel}>
-                  {getRatingsLabel()}
-                  {selectedRatings.length === 0 && (
-                    <svg
-                      className={`w-3 h-3 ${classes.chevron} ${
-                        openDropdown === "rating" ? classes.chevronOpen : ""
-                      }`}
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  )}
-                </span>
-                {selectedRatings.length > 0 && (
-                  <button
-                    onClick={clearRatings}
-                    className={classes.chipClearButton}
-                    aria-label="Clear rating filter"
-                  >
-                    <svg
-                      className="w-3.5 h-3.5"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M6 18L18 6M6 6l12 12"
-                      />
-                    </svg>
-                  </button>
-                )}
-              </div>
-              {openDropdown === "rating" && (
-                <div className={classes.dropdownMenu}>
-                  {ratingRanges.map((range) => (
-                    <div
-                      key={range.value}
-                      onClick={() => toggleRating(range.value)}
-                      className={classes.dropdownItem}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedRatings.includes(range.value)}
-                        onChange={() => {}}
-                        className={classes.checkbox}
-                      />
-                      <span className={classes.dropdownItemText}>
-                        {range.label}
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Providers Grid */}
-        {filteredProviders.length > 0 ? (
-          <div className={classes.grid}>
-            {filteredProviders.map((provider) => (
-              <ProviderCard
-                key={provider.id}
-                companyName={provider.companyName}
-                services={provider.services}
-                rating={provider.rating}
-                reviewCount={provider.reviewCount}
-                location={provider.location}
-                logo={provider.logo}
-                photos={provider.photos}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className={classes.noResults}>
-            <div className={classes.noResultsIcon}>🔍</div>
-            <p className={classes.noResultsText}>{t.providers.noResults}</p>
-          </div>
-        )}
       </div>
     </main>
+  );
+}
+
+export default function ProvidersPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-zinc-50 dark:bg-black" />}>
+      <ProvidersPageContent />
+    </Suspense>
   );
 }
