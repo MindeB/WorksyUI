@@ -34,12 +34,12 @@ const classes = {
 
 interface ProviderCardProps {
   companyName: string;
-  services: string[];
+  services: readonly string[];
   rating: number;
   reviewCount: number;
   location: string;
   logo: string;
-  photos: string[];
+  photos: readonly string[];
 }
 
 export default function ProviderCard({
