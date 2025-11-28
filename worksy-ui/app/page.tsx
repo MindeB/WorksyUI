@@ -6,7 +6,7 @@ import CTASections from "./components/CTASections";
 
 export default function Home() {
   return (
-    <div className="bg-zinc-50 dark:bg-black">
+    <div className="bg-white dark:bg-zinc-950">
       <Hero />
       <CategoriesSection />
       <HowItWorks />

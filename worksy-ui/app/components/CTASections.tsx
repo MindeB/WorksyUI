@@ -1,29 +1,51 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { useTranslation } from "../lib/i18n/LanguageContext";
 
 const classes = {
-  userSection: "py-16 md:py-20 bg-white dark:bg-black",
-  specialistSection: "py-16 md:py-20 bg-zinc-50 dark:bg-zinc-900",
+  userSection: "py-20 md:py-28 bg-white dark:bg-zinc-950",
+  specialistSection: "py-20 md:py-28 bg-zinc-50 dark:bg-zinc-900",
   container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-  userCard: "bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 md:p-12 text-white shadow-xl",
-  specialistCard: "bg-gradient-to-r from-emerald-600 to-teal-700 rounded-2xl p-8 md:p-12 text-white shadow-xl",
-  grid: "grid grid-cols-1 md:grid-cols-2 gap-8 items-center",
-  title: "text-3xl md:text-4xl font-bold mb-4",
-  userSubtitle: "text-lg text-blue-100 mb-6",
-  specialistSubtitle: "text-lg text-emerald-100 mb-6",
-  featureList: "space-y-2 mb-6",
-  featureItem: "flex items-center",
-  checkmark: "mr-2",
-  userButton: "inline-block bg-white text-blue-600 px-8 py-3 rounded-lg font-semibold hover:bg-blue-50 transition-colors",
-  specialistButton: "inline-block bg-white text-emerald-600 px-8 py-3 rounded-lg font-semibold hover:bg-emerald-50 transition-colors",
+  userCard: "bg-accent rounded-2xl p-10 md:p-14 text-white shadow-lg opacity-0 animate-on-scroll",
+  specialistCard: "bg-emerald-600 rounded-2xl p-10 md:p-14 text-white shadow-lg opacity-0 animate-on-scroll",
+  grid: "grid grid-cols-1 md:grid-cols-2 gap-12 items-center",
+  title: "text-3xl md:text-4xl font-semibold mb-4",
+  userSubtitle: "text-lg text-white/90 mb-8",
+  specialistSubtitle: "text-lg text-white/90 mb-8",
+  featureList: "space-y-3 mb-8",
+  featureItem: "flex items-center text-base",
+  checkmark: "mr-3 text-xl",
+  userButton: "inline-block bg-white text-accent px-8 py-4 rounded-lg font-medium hover:bg-zinc-50 transition-colors shadow-md",
+  specialistButton: "inline-block bg-white text-emerald-600 px-8 py-4 rounded-lg font-medium hover:bg-zinc-50 transition-colors shadow-md",
   iconWrapper: "hidden md:flex justify-center",
-  icon: "text-8xl",
+  icon: "text-9xl opacity-80",
 };
 
 export default function CTASections() {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('animate-in', 'fade-in', 'slide-in-from-bottom', 'duration-700');
+              (entry.target as HTMLElement).style.opacity = '1';
+            }, index * 100);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <>

@@ -1,25 +1,47 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslation } from "../lib/i18n/LanguageContext";
 
 const classes = {
-  section: "py-16 md:py-24 bg-zinc-50 dark:bg-zinc-900",
+  section: "py-20 md:py-28 bg-zinc-50 dark:bg-zinc-900",
   container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-  header: "text-center mb-12",
-  title: "text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-4",
+  header: "text-center mb-16 opacity-0 animate-on-scroll",
+  title: "text-4xl md:text-5xl font-semibold text-zinc-900 dark:text-white mb-4",
   subtitle: "text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto",
   grid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8",
-  stepWrapper: "relative",
+  stepWrapper: "relative opacity-0 animate-on-scroll",
   stepContent: "flex flex-col items-center text-center",
-  iconCircle: "w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-4xl mb-4 shadow-lg",
-  stepNumber: "absolute top-0 right-0 w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm",
-  stepTitle: "text-xl font-semibold text-zinc-900 dark:text-zinc-50 mb-2",
-  stepDescription: "text-zinc-600 dark:text-zinc-400",
-  arrow: "hidden lg:block absolute top-10 -right-4 text-blue-600 text-3xl",
+  iconCircle: "w-24 h-24 bg-accent rounded-full flex items-center justify-center text-5xl mb-4 shadow-md",
+  stepNumber: "absolute top-0 right-0 w-10 h-10 bg-accent text-white rounded-full flex items-center justify-center font-semibold text-base",
+  stepTitle: "text-xl font-semibold text-zinc-900 dark:text-white mb-3",
+  stepDescription: "text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed",
+  arrow: "hidden lg:block absolute top-12 -right-4 text-accent text-3xl",
 };
 
 export default function HowItWorks() {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('animate-in', 'fade-in', 'slide-in-from-bottom', 'duration-700');
+              (entry.target as HTMLElement).style.opacity = '1';
+            }, index * 100);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   const steps = [
     {

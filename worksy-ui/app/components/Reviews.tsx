@@ -4,34 +4,34 @@ import { useState, useEffect } from "react";
 import { useTranslation } from "../lib/i18n/LanguageContext";
 
 const classes = {
-  section: "py-16 bg-white dark:bg-black",
+  section: "py-20 md:py-28 bg-white dark:bg-zinc-950",
   container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
-  header: "text-center mb-12",
-  title: "text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-4",
+  header: "text-center mb-16 opacity-0 animate-on-scroll",
+  title: "text-4xl md:text-5xl font-semibold text-zinc-900 dark:text-white mb-4",
   subtitle: "text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto",
-  carouselWrapper: "relative",
-  navButton: "absolute top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-2 md:p-3 shadow-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors",
+  carouselWrapper: "relative opacity-0 animate-on-scroll",
+  navButton: "absolute top-1/2 -translate-y-1/2 z-10 bg-white dark:bg-zinc-800 rounded-full p-3 shadow-md hover:bg-zinc-50 dark:hover:bg-zinc-700 transition-colors border border-zinc-200 dark:border-zinc-700",
   prevButton: "left-2 md:-left-4",
   nextButton: "right-2 md:-right-4",
-  navIcon: "w-5 h-5 md:w-6 md:h-6 text-zinc-900 dark:text-zinc-50",
+  navIcon: "w-5 h-5 text-zinc-700 dark:text-zinc-300",
   reviewsContainer: "overflow-hidden",
   reviewsTrack: "flex transition-transform duration-500 ease-in-out",
   reviewSlide: "w-full md:w-1/3 flex-shrink-0 px-4 md:px-3",
-  reviewCard: "bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-6 h-full border border-zinc-200 dark:border-zinc-800 hover:shadow-lg transition-shadow",
+  reviewCard: "bg-zinc-50 dark:bg-zinc-900 rounded-xl p-6 h-full border border-zinc-200 dark:border-zinc-800 hover:shadow-md transition-shadow",
   userInfo: "flex items-center gap-4 mb-4",
-  avatar: "w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-semibold text-lg",
-  userName: "font-semibold text-zinc-900 dark:text-zinc-50",
-  service: "text-sm text-zinc-500 dark:text-zinc-400",
+  avatar: "w-14 h-14 rounded-full bg-accent flex items-center justify-center text-white font-semibold text-xl",
+  userName: "font-semibold text-zinc-900 dark:text-white",
+  service: "text-sm text-zinc-600 dark:text-zinc-400",
   ratingWrapper: "mb-4",
   starsContainer: "flex gap-1",
   star: "w-5 h-5",
   starFilled: "text-yellow-400 fill-current",
   starEmpty: "text-zinc-300 dark:text-zinc-600",
-  comment: "text-zinc-700 dark:text-zinc-300 leading-relaxed",
+  comment: "text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed",
   dotsContainer: "flex justify-center gap-2 mt-8",
-  dot: "h-2 rounded-full transition-all",
-  dotActive: "w-8 bg-blue-600",
-  dotInactive: "w-2 bg-zinc-300 dark:bg-zinc-600 hover:bg-zinc-400 dark:hover:bg-zinc-500",
+  dot: "h-2 rounded-full transition-all duration-200",
+  dotActive: "w-8 bg-accent",
+  dotInactive: "w-2 bg-zinc-300 dark:bg-zinc-600 hover:bg-zinc-400 dark:hover:bg-zinc-500 cursor-pointer",
 };
 
 export default function Reviews() {
@@ -75,6 +75,28 @@ export default function Reviews() {
       setCurrentIndex(maxIndex);
     }
   }, [currentIndex, maxIndex]);
+
+  // Scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('animate-in', 'fade-in', 'slide-in-from-bottom', 'duration-700');
+              (entry.target as HTMLElement).style.opacity = '1';
+            }, index * 100);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, []);
 
   const goToNext = () => {
     setIsAutoPlaying(false);

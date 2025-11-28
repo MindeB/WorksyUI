@@ -8,15 +8,21 @@ import ChipDropdownFilters from "../components/ChipDropdownFilters";
 import { categories } from "../data/categories";
 
 const classes = {
-  page: "min-h-screen bg-zinc-50 dark:bg-black",
-  content: "pt-8",
-  container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12",
-  header: "mb-8",
-  title: "text-3xl md:text-4xl font-bold text-zinc-900 dark:text-zinc-50 mb-6",
-  grid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12",
-  noResults: "text-center py-16",
-  noResultsText: "text-xl text-zinc-600 dark:text-zinc-400 mb-4",
-  noResultsIcon: "text-6xl mb-4",
+  page: "min-h-screen bg-white dark:bg-zinc-950",
+  content: "pt-6 pb-12",
+  container: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+  header: "mb-8 flex items-center justify-between opacity-0 animate-on-scroll",
+  titleSection: "flex-1",
+  title: "text-3xl font-semibold text-zinc-900 dark:text-white mb-2",
+  subtitle: "text-sm text-zinc-600 dark:text-zinc-400",
+  resultCount: "text-sm font-medium text-zinc-700 dark:text-zinc-300 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900",
+  grid: "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6",
+  providerCard: "opacity-0 animate-on-scroll",
+  noResults: "text-center py-20 opacity-0 animate-on-scroll",
+  noResultsIcon: "text-6xl mb-4 opacity-20",
+  noResultsText: "text-2xl font-semibold text-zinc-900 dark:text-white mb-2",
+  noResultsSubtext: "text-sm text-zinc-600 dark:text-zinc-400 mb-8",
+  noResultsButton: "px-6 py-3 bg-accent hover:bg-accent-dark text-white rounded-lg font-medium text-sm transition-colors duration-200",
 };
 
 // Service ID to English name mapping
@@ -114,28 +120,34 @@ const SERVICE_ID_TO_LITHUANIAN: Record<string, string> = {
 function ProvidersPageContent() {
   const { t, locale } = useTranslation();
   const searchParams = useSearchParams();
-  const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>({});
 
   const providers = t.providers.items;
 
-  // Initialize filters from URL params
-  useEffect(() => {
+  // Derive initial filter values from URL params
+  const initialFilterValues = useMemo(() => {
     const serviceId = searchParams.get('service');
     const location = searchParams.get('location');
     const budget = searchParams.get('budget');
     const rating = searchParams.get('rating');
 
-    const initialFilters: Record<string, string | string[]> = {};
+    const filters: Record<string, string | string[]> = {};
     // Service can be multi-select, so wrap in array
     if (serviceId) {
-      initialFilters['service-type'] = [serviceId];
+      filters['service-type'] = [serviceId];
     }
-    if (location) initialFilters['location'] = location;
-    if (budget) initialFilters['budget'] = budget;
-    if (rating) initialFilters['rating'] = rating;
+    if (location) filters['location'] = location;
+    if (budget) filters['budget'] = budget;
+    if (rating) filters['rating'] = rating;
 
-    setFilterValues(initialFilters);
+    return filters;
   }, [searchParams]);
+
+  const [filterValues, setFilterValues] = useState<Record<string, string | string[]>>(initialFilterValues);
+
+  // Update filter values when URL params change
+  useEffect(() => {
+    setFilterValues(initialFilterValues);
+  }, [initialFilterValues]);
 
   // Show ALL services from categories with translated names
   const availableServiceOptions = useMemo(() => {
@@ -247,41 +259,93 @@ function ProvidersPageContent() {
     });
   }, [providers, filterValues, locale]);
 
+  // Scroll animations
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry, index) => {
+          if (entry.isIntersecting) {
+            setTimeout(() => {
+              entry.target.classList.add('animate-in', 'fade-in', 'slide-in-from-bottom', 'duration-700');
+              (entry.target as HTMLElement).style.opacity = '1';
+            }, index * 50);
+          }
+        });
+      },
+      { threshold: 0.1 }
+    );
+
+    const elements = document.querySelectorAll('.animate-on-scroll');
+    elements.forEach((el) => observer.observe(el));
+
+    return () => observer.disconnect();
+  }, [filteredProviders]);
+
   const handleFilterChange = (newFilters: Record<string, string | string[]>) => {
     setFilterValues(newFilters);
   };
 
   return (
     <main className={classes.page}>
+      {/* Filters */}
       <ChipDropdownFilters filters={filters} onFilterChange={handleFilterChange} initialValues={filterValues} />
 
+      {/* Content */}
       <div className={classes.content}>
         <div className={classes.container}>
-          {/* Header */}
+          {/* Header with Results Count */}
           <div className={classes.header}>
-            <h1 className={classes.title}>{t.providers.title}</h1>
+            <div className={classes.titleSection}>
+              <h2 className={classes.title}>
+                {locale === 'lt' ? 'Visi specialistai' : 'All Providers'}
+              </h2>
+              <p className={classes.subtitle}>
+                {locale === 'lt'
+                  ? 'Surask tinkamą specialistą savo poreikiams'
+                  : 'Find the right specialist for your needs'}
+              </p>
+            </div>
+            {filteredProviders.length > 0 && (
+              <div className={classes.resultCount}>
+                {filteredProviders.length} {locale === 'lt' ? 'rezultatai' : 'results'}
+              </div>
+            )}
           </div>
 
           {/* Providers Grid */}
           {filteredProviders.length > 0 ? (
             <div className={classes.grid}>
               {filteredProviders.map((provider) => (
-                <ProviderCard
-                  key={provider.id}
-                  companyName={provider.companyName}
-                  services={provider.services}
-                  rating={provider.rating}
-                  reviewCount={provider.reviewCount}
-                  location={provider.location}
-                  logo={provider.logo}
-                  photos={provider.photos}
-                />
+                <div key={provider.id} className={classes.providerCard}>
+                  <ProviderCard
+                    companyName={provider.companyName}
+                    services={provider.services}
+                    rating={provider.rating}
+                    reviewCount={provider.reviewCount}
+                    location={provider.location}
+                    logo={provider.logo}
+                    photos={provider.photos}
+                  />
+                </div>
               ))}
             </div>
           ) : (
             <div className={classes.noResults}>
               <div className={classes.noResultsIcon}>🔍</div>
-              <p className={classes.noResultsText}>{t.providers.noResults}</p>
+              <p className={classes.noResultsText}>
+                {locale === 'lt' ? 'Specialistų nerasta' : 'No providers found'}
+              </p>
+              <p className={classes.noResultsSubtext}>
+                {locale === 'lt'
+                  ? 'Pabandykite pakeisti filtrus arba ieškoti kitoje vietoje'
+                  : 'Try adjusting your filters or searching in a different location'}
+              </p>
+              <button
+                onClick={() => setFilterValues({})}
+                className={classes.noResultsButton}
+              >
+                {locale === 'lt' ? 'Išvalyti filtrus' : 'Clear Filters'}
+              </button>
             </div>
           )}
         </div>

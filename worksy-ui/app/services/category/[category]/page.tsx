@@ -25,51 +25,55 @@ export default async function CategoryPage({ params }: CategoryPageProps) {
   const title = t.serviceGroups[categoryType];
 
   return (
-    <div className="min-h-screen bg-zinc-50 dark:bg-black py-12">
+    <div className="min-h-screen bg-white dark:bg-zinc-950 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <div className="mb-8">
-          <nav className="flex text-sm text-zinc-600 dark:text-zinc-400">
-            <Link href="/" className="hover:text-zinc-900 dark:hover:text-zinc-50">
+        <div className="mb-6">
+          <nav className="flex items-center text-sm text-zinc-600 dark:text-zinc-400 px-4 py-2 rounded-lg border border-zinc-200 dark:border-zinc-800 w-fit bg-zinc-50 dark:bg-zinc-900">
+            <Link href="/" className="hover:text-accent transition-colors">
               {t.service.breadcrumbs.home}
             </Link>
-            <span className="mx-2">/</span>
-            <Link href="/services" className="hover:text-zinc-900 dark:hover:text-zinc-50">
+            <svg className="w-4 h-4 mx-2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <Link href="/services" className="hover:text-accent transition-colors">
               {t.service.breadcrumbs.services}
             </Link>
-            <span className="mx-2">/</span>
-            <span className="text-zinc-900 dark:text-zinc-50">{title}</span>
+            <svg className="w-4 h-4 mx-2 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-zinc-900 dark:text-white font-medium">{title}</span>
           </nav>
         </div>
 
         {/* Header */}
         <div className="mb-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-zinc-900 dark:text-zinc-50 mb-4">
+          <h1 className="text-4xl md:text-5xl font-semibold text-zinc-900 dark:text-white mb-3">
             {title}
           </h1>
-          <p className="text-lg text-zinc-600 dark:text-zinc-400 max-w-2xl">
+          <p className="text-base text-zinc-600 dark:text-zinc-400 max-w-2xl">
             Raskite geriausius {title.toLowerCase()} specialistus savo poreikiams
           </p>
         </div>
 
         {/* Services Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {categoryServices.map((service) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {categoryServices.map((service, idx) => {
             const translatedCategory = t.serviceCategories[service.id as keyof typeof t.serviceCategories];
             const serviceName = translatedCategory?.name || service.name;
             return (
               <Link
                 key={service.id}
                 href={`/providers?service=${service.id}`}
-                className="group flex flex-col items-center p-6 bg-white dark:bg-zinc-900 rounded-xl hover:bg-blue-50 dark:hover:bg-zinc-800 hover:shadow-lg transition-all duration-300 border border-zinc-200 dark:border-zinc-800"
+                className="group flex flex-col items-center text-center p-8 bg-zinc-50 dark:bg-zinc-900 rounded-2xl hover:bg-accent/5 dark:hover:bg-accent/10 hover:shadow-lg transition-all duration-300 border border-zinc-200 dark:border-zinc-800 hover:border-accent cursor-pointer"
               >
-                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                <div className="text-6xl mb-6 group-hover:scale-110 transition-transform duration-300">
                   {service.icon}
                 </div>
-                <h3 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-50 text-center mb-1">
+                <h3 className="text-lg font-semibold text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">
                   {serviceName}
                 </h3>
-                <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 text-center">
+                <p className="text-sm text-zinc-600 dark:text-zinc-400 line-clamp-2">
                   {translatedCategory?.description || service.description}
                 </p>
               </Link>

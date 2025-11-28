@@ -5,24 +5,24 @@ import { useRouter } from "next/navigation";
 import { useTranslation } from "../lib/i18n/LanguageContext";
 
 const classes = {
-  hero: "relative bg-gradient-to-br from-blue-600 via-blue-700 to-indigo-800 text-white overflow-hidden",
+  hero: "relative bg-accent text-white overflow-hidden",
   backgroundIcons: "absolute inset-0 overflow-hidden pointer-events-none",
   icon: "absolute opacity-10 animate-float",
-  content: "relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28",
+  content: "relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 md:py-32",
   contentInner: "text-center max-w-4xl mx-auto",
-  title: "text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight",
-  subtitle: "text-lg md:text-xl mb-8 text-blue-100",
-  searchForm: "max-w-2xl mx-auto",
-  searchContainer: "flex flex-col sm:flex-row gap-3 bg-white rounded-lg p-2 shadow-2xl",
-  searchInput: "flex-grow px-4 py-3 text-zinc-900 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500",
-  searchButton: "bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-md font-semibold transition-colors whitespace-nowrap",
-  stats: "mt-12 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto",
-  statCard: "bg-white/10 backdrop-blur-sm rounded-lg p-4",
-  statNumber: "text-3xl font-bold",
-  statLabel: "text-blue-100",
+  title: "text-5xl md:text-6xl lg:text-7xl font-semibold mb-6 leading-tight animate-in fade-in slide-in-from-bottom duration-700",
+  subtitle: "text-xl md:text-2xl mb-10 text-white/90 animate-in fade-in slide-in-from-bottom duration-700 delay-100",
+  searchForm: "max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom duration-700 delay-200",
+  searchContainer: "flex flex-col sm:flex-row gap-3 bg-white rounded-xl p-2 shadow-xl",
+  searchInput: "flex-grow px-5 py-4 text-zinc-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent-dark",
+  searchButton: "bg-zinc-900 hover:bg-zinc-800 text-white px-8 py-4 rounded-lg font-medium transition-colors whitespace-nowrap",
+  stats: "mt-16 grid grid-cols-1 sm:grid-cols-3 gap-8 max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom duration-700 delay-300",
+  statCard: "bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20",
+  statNumber: "text-4xl font-semibold mb-1",
+  statLabel: "text-white/80 text-sm",
   waveSeparator: "absolute bottom-0 left-0 right-0",
   waveSvg: "w-full h-12 md:h-16",
-  wavePath: "fill-zinc-50 dark:fill-black",
+  wavePath: "fill-white dark:fill-zinc-950",
 };
 
 export default function Hero() {
