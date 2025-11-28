@@ -75,23 +75,26 @@ export default async function ServiceGroupPage({ params }: ServiceGroupPageProps
 
         {/* Services Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {groupCategories.map((category) => (
-            <Link
-              key={category.id}
-              href={`/services/${category.id}`}
-              className="group flex flex-col items-center p-6 bg-white dark:bg-zinc-900 rounded-xl hover:bg-blue-50 dark:hover:bg-zinc-800 hover:shadow-lg transition-all duration-300 border border-zinc-200 dark:border-zinc-800"
-            >
-              <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
-                {category.icon}
-              </div>
-              <h3 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-50 text-center mb-1">
-                {category.name}
-              </h3>
-              <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 text-center">
-                {category.description}
-              </p>
-            </Link>
-          ))}
+          {groupCategories.map((category) => {
+            const translatedCategory = t.serviceCategories[category.id as keyof typeof t.serviceCategories];
+            return (
+              <Link
+                key={category.id}
+                href={`/services/${category.id}`}
+                className="group flex flex-col items-center p-6 bg-white dark:bg-zinc-900 rounded-xl hover:bg-blue-50 dark:hover:bg-zinc-800 hover:shadow-lg transition-all duration-300 border border-zinc-200 dark:border-zinc-800"
+              >
+                <div className="text-5xl mb-3 group-hover:scale-110 transition-transform duration-300">
+                  {category.icon}
+                </div>
+                <h3 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-50 text-center mb-1">
+                  {translatedCategory?.name || category.name}
+                </h3>
+                <p className="text-xs md:text-sm text-zinc-600 dark:text-zinc-400 text-center">
+                  {translatedCategory?.description || category.description}
+                </p>
+              </Link>
+            );
+          })}
         </div>
 
         {/* CTA Section */}
